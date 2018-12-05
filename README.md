@@ -1,5 +1,5 @@
 # Contact CLI (Database version)
-
+ ## Mac Dowell and Clifford
 ## Project Description
 The CLI Contact App is an app that allows you to:
 - Create a contact and save it to an SQL Database
