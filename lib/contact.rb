@@ -1,3 +1,4 @@
+require 'pry'
 class Contact
     attr_accessor :firstname, :lastname, :email, :phone, :address, :profession
     attr_reader :id
@@ -81,4 +82,4 @@ class Contact
 
 
 end 
-    
+    binding.pry
