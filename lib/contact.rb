@@ -2,10 +2,10 @@ require 'pry'
 class Contact
     attr_accessor :firstname, :lastname, :email, :phone, :address, :profession
     attr_reader :id
-     
+
     def initialize(id=nil, firstname, lastname, email, phone, address, profession)
     @id = id
-    @firtsname = firstname
+    @firstname = firstname
     @lastname = lastname
     @email = email
     @phone = phone
@@ -28,12 +28,9 @@ class Contact
     DB[:conn].execute(sql)
     end
     
-    def self.drop_table
-        sql = <<-SQL
-          DROP TABLE contacts
-        SQL
-        DB[:conn].execute(sql)
-      end
+    def self.create_contact(row)
+        new(*row).tap { |c| c.save}
+    end
     
       def self.new_from_db(row)
         id = row[0]
@@ -43,8 +40,8 @@ class Contact
         phone = [4]
         address = [5]
         profession = [6]
-
-        new_contact = Contact.new(id: id, firstname: firstname, lastname: lastname, email: email, phone: phone,  address: address, profession: profession)
+        
+        Contact.new(id, firstname, lastname, email, phone,  address, profession)
       end
 
       def self.find_by_firstname(firstname)
@@ -71,15 +68,56 @@ class Contact
         end.first
       end
 
+      def self.all
+        sql = <<-SQL
+          SELECT *
+          FROM contacts ORDER BY firstname
+        SQL
+        DB[:conn].execute(sql).map do |row|
+          self.new_from_db(row)
+        end
+      end
+
       def update
         sql = <<-SQL
           UPDATE contacts
           SET firstname = ?, lastname = ?, email = ?, phone = ?, addresse = ?, profession = ?
           WHERE id = ?
         SQL
-        DB[:conn].execute(sql, self.firstname, self.lastname, self.emaail, self.phone, self.address, self.profession, self.id)
+        DB[:conn].execute(sql, self.firstname, self.lastname, self.email, self.phone, self.address, self.profession, self.id)
       end
 
+
+
+      def save
+        if self.id
+          self.update
+        else
+          sql = <<-SQL
+            INSERT INTO contacts (firstname, lastname, email, phone, addresse, profession)
+            VALUES (?, ?, ?, ?, ?, ?)
+          SQL
+          DB[:conn].execute(sql, self.firstname, self.lastname, self.email, self.phone, self.address, self.profession)
+    
+          @id = DB[:conn].execute('SELECT last_insert_rowid() FROM contacts')[0][0]
+        end
+        self
+      end
+    
+      def delete
+        sql = <<-SQL
+        delete FROM contacts WHERE id = ?
+        SQL
+        DB[:conn].execute(sql, self.id)
+
+      end 
+
+      def delete_all_contact
+        sql = <<-SQL
+        delete FROM contacts
+        SQL
+        DB[:conn].execute(sql)
+      end 
 
 end 
     binding.pry
