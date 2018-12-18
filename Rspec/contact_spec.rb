@@ -75,8 +75,23 @@ describe "Contact" do
   #   end
   # end
 
-  
+  describe '.find_by_id' do
+    it 'returns a new contact object by id' do
+      contact = Contact.create_contact( ["Kevin","Charles","kevindebrincharles@example.com", "21323341", "Cap-Au-Haitien", "Medecin"])
 
+      contact_from_db = Contact.find_by_id(1)
 
+      expect(contact_from_db.id).to eq(1)
+    end
+  end
+
+  describe '.find_or_create_by' do
+    it 'creates an instance of a contact if it does not already exist' do
+      contact1 = Contact.create( "BYRON MARIS", "Jean-Pierre","jean_pierre_maris@example.com", "37610012", "Cayes", "Professeur")
+      contact2 = Contact.find_or_create_by("Johnny", "Pierre", "johnnypierre@example.com", "44000000", "Downtown", "Lawyer")
+
+      expect(contact1.id).to_not eq(contact2.id)
+    end
+  end
 
 end

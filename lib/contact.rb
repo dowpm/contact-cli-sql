@@ -56,14 +56,14 @@ class Contact
         end.first
       end
 
-      def self.find_by_lastname(lastname)
+      def self.find_by_id(id)
         sql = <<-SQL
           SELECT *
           FROM contacts
-          WHERE lastname = ?
+          WHERE id = ?
           LIMIT 1
         SQL
-        DB[:conn].execute(sql, lastname).map do |row|
+        DB[:conn].execute(sql, id).map do |row|
           self.new_from_db(row)
         end.first
       end
@@ -120,4 +120,4 @@ class Contact
       end 
 
 end 
-    binding.pry
+    # binding.pry
