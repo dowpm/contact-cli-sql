@@ -1,4 +1,5 @@
-require 'sqlite3'
+require 'bundler'
+Bundler.require
 
 DB = {:conn => SQLite3::Database.new("db/contacts.db")}#// the connection of our database
 
