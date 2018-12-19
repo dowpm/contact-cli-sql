@@ -6,6 +6,7 @@ end
 
 def reload!
     load 'lib/contact.rb'
+    load 'lib/application.rb'
 end
 
 def clear
