@@ -1,6 +1,6 @@
 require_relative "spec_helper"
 
-describe "Contact" do
+describe Contact do
 
   let(:junny) {Contact.new( "Johnny", "Pierre", "johnnypierre@example.com", "44000000", "Downtown", "Lawyer" )}
 
