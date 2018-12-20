@@ -58,8 +58,9 @@ class Application
             system "clear" or system "cls"
             add_contact
         when 2
-            return 'show_ooption' if check_for_contact? "see"
+            return 'show_option' if check_for_contact? "see"
             row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
+
             contacts = Contact.all.each.with_index(1).map do |person, index|
                 ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
                     person.phone, person.address, person.profession]
@@ -72,6 +73,9 @@ class Application
             puts table
             puts "\n","Choose an option:"
             "show_option"
+        when 3
+            return 'show_option' if check_for_contact? "find"
+            # edit_contact
         when 4
             check_for_contact? "edite"
             edit_contact
@@ -161,7 +165,8 @@ class Application
         EDITCONTACTSTAPE.each.with_index do |stape, i|
             
             puts "#{stape} for (#{data[i]})"
-            inf = gets.strip
+            stape.include?('firstname') || stape.include?('lastname') ? 
+            inf = gets.strip.capitalize : inf = gets.strip
             return "start" if inf.upcase == "!Q"
             if inf == ""
                 info << data[i]
@@ -169,6 +174,7 @@ class Application
                 info << inf
             end
         end
+        #--------------------------------------check if all info is ok
         while correct.empty?
             system "clear" or system "cls"
             info.each {|i| print "#{i} \t"}
@@ -179,17 +185,18 @@ class Application
                 correct = ""
             end
         end
+        #-----------------------
         system "clear" or system "cls"
         if correct == "N" or correct == "NO"
             system "clear" or system "cls"
             edit_contact
         else
             info.unshift contact.id
-            Contact.create_contact info
-        end
-
-        puts "Choose an option:","\n"
-        "show_option"        
+            contact = Contact.create_contact info
+            puts "#{contact.firstname} #{contact.lastname} has been successfully edited \n"
+            puts "Choose an option:","\n"
+            "show_option"
+        end        
     end
 
     def self.delete_contact
@@ -218,6 +225,23 @@ class Application
         puts "#{contact.firstname} #{contact.lastname} has been deleted","\n","Choose an option:"
         "show_option"
     end
+
+    def self.print_contacts(from_number)
+      
+        rows = Contact.all[from_number-1, 10].each.with_index(from_number).map do |person, index|
+            ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
+                person.phone, person.address, person.profession]
+        end
+        row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
+        table = Terminal::Table.new :title => "Contacts #{from_number} - #{from_number+9}",
+         :headings => row_header, :rows => rows
+        
+        table.style = {
+                        :all_separators => true,:padding_left => 3, 
+                        :border_x => "=", :border_i => "x"
+                    }
+        puts table
+  end
 end
 
 binding.pry
