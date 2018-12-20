@@ -125,6 +125,64 @@ class Application
         puts "Now you have #{Contact.all.size} contact(s)","Choose an option:","\n"
         "show_option"
     end
+
+    def self.edit_contact
+        info, correct = [], ""
+        
+        puts "Choose the contact to edite:","** You can type '!q' to back to the menu **"
+        puts "** You can hit enter to keep the old information **"
+        contacts = Contact.all.each.with_index(1).map do |person, index|
+            "#{index}. #{person.firstname} #{person.lastname}"
+        end.join("\n")
+        puts contacts
+
+        index = gets.strip
+        if index.upcase == "!Q"
+            return "start"
+        end
+
+        index = index.to_i
+        if index < 1 or index > (Contact.all.size)
+            system "clear" or system "cls"
+            return "edit_contact"
+        end
+        contact = Contact.all[index-1]
+        data = [contact.firstname, contact.lastname,
+        contact.email, contact.phone, contact.address,
+        contact.profession]
+        EDITCONTACTSTAPE.each.with_index do |stape, i|
+            
+            puts "#{stape} for (#{data[i]})"
+            inf = gets.strip
+            start if inf.upcase == "!Q"
+            if inf == ""
+                info << data[i]
+            else
+                info << inf
+            end
+        end
+        while correct.empty?
+            system "clear" or system "cls"
+            info.each {|i| print "#{i} \t"}
+            puts "\n","Is Everything correct? (Y/N)"
+            correct = gets.strip.upcase
+            if correct != "Y" && correct != "N" && correct != "YES" && correct != "NO"
+                puts "\n", "Bad choice", "\n"
+                correct = ""
+            end
+        end
+        system "clear" or system "cls"
+        if correct == "N" or correct == "NO"
+            system "clear" or system "cls"
+            edit_contact
+        else
+            info.unshift contact.id
+            Contact.create_contact info
+        end
+
+        puts "Choose an option:","\n"
+        "show_option"        
+    end
 end
 
 binding.pry
