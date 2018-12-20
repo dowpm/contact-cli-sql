@@ -31,18 +31,6 @@ class Contact
     def self.create_contact(row)
         new(*row).tap { |c| c.save}
     end
-    
-    def self.new_from_db(row)
-      id = row[0]
-      firstname = row[1]
-      lastname = row[2]
-      email = [3]
-      phone = [4]
-      address = [5]
-      profession = [6]
-      
-      new(id, firstname, lastname, email, phone,  address, profession)
-    end
 
     def self.find_by_firstname(firstname)
       sql = <<-SQL
@@ -52,7 +40,7 @@ class Contact
         LIMIT 1
       SQL
       DB[:conn].execute(sql, firstname).map do |row|
-        self.new_from_db(row)
+        new(*row)
       end.first
     end
 
@@ -64,7 +52,7 @@ class Contact
         LIMIT 1
       SQL
       DB[:conn].execute(sql, lastname).map do |row|
-        self.new_from_db(row)
+        new(*row)
       end.first
     end
 
@@ -74,7 +62,7 @@ class Contact
         FROM contacts ORDER BY firstname
       SQL
       DB[:conn].execute(sql).map do |row|
-        self.new_from_db(row)
+        self.new(*row)
       end
     end
 
