@@ -154,7 +154,7 @@ class Application
             
             puts "#{stape} for (#{data[i]})"
             inf = gets.strip
-            start if inf.upcase == "!Q"
+            return "start" if inf.upcase == "!Q"
             if inf == ""
                 info << data[i]
             else
@@ -182,6 +182,33 @@ class Application
 
         puts "Choose an option:","\n"
         "show_option"        
+    end
+
+    def self.delete_contact
+        puts "Choose the contact to delete:","** You can type !q to back to the menu **"
+        contacts = Contact.all.each.with_index(1).map do |person, index|
+            "#{index}. #{person.firstname} #{person.lastname}"
+        end.join("\n")
+        puts contacts
+        index = gets.strip
+        if index.upcase == "!Q"
+            return "start"
+        end
+        index = index.to_i
+        if index < 1 or index > Contact.all.size
+            system "cls" or system "clear"
+            return "delete_contact"
+        end
+        puts "Are you sure? (Y/N)"
+        ch = gets.strip.upcase
+        if ch == "N" or ch == "NO"
+            return "start"
+        end
+        system "clear" or system "cls"
+        contact = Contact.all[index-1]
+        contact.delete
+        puts "#{contact.firstname} #{contact.lastname} has been deleted","\n","Choose an option:"
+        "show_option"
     end
 end
 
