@@ -90,20 +90,20 @@ describe "Contact" do
     end
   end
 
-  describe '#delete_all_contact' do
-    it 'returns all the contacts info at once' do
+  describe '.delete_all_contact' do
+    it 'it should delete all the contacts in the database at once' do
       Contact.delete_all_contact
-      execute(Contact.all.size).to eq(0)
-
+      table_check_sql = "SELECT * FROM contacts"
+      expect(DB[:conn].execute(table_check_sql)[0]).to eq(nil)
     end 
   end 
 
   describe '#update' do
     it 'updates the record associated with a given instance' do
       junny.save
-      junny.name = "Johnny"
+      junny.name = "Johnny Sam"
       junny.update
-      junny = Contact.find_by_name("Johnny.")
+      junny = Contact.find_by_name("Johnny")
       expect(junny.id).to eq(junny.id)
     end
 
