@@ -71,6 +71,15 @@ class Application
             puts table
             puts "\n","Choose an option:"
             "show_option"
+        when 4
+            check_for_contact "edite"
+            edit_contact
+        when 5
+            check_for_contact "delete"
+            delete_contact
+        when 6
+            check_for_contact "edite"
+            
         when 7
             puts "Do you really want to exit (y/n)"
             exi = gets.strip.downcase
