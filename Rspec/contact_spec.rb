@@ -98,13 +98,13 @@ describe "Contact" do
     end 
   end 
 
-  describe '#update' do
+  describe 'update' do
     it 'updates the record associated with a given instance' do
       junny.save
-      junny.name = "Johnny Sam"
+      junny.firstname = "Johnny Sam"
       junny.update
-      junny = Contact.find_by_name("Johnny")
-      expect(junny.id).to eq(junny.id)
+      contact_from_db = Contact.find_by_firstname("Johnny Sam")
+      expect(contact_from_db[0].id).to eq(junny.id)
     end
 
   end
