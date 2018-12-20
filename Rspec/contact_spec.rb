@@ -74,22 +74,19 @@ describe "Contact" do
 
   describe '.find_by_id' do
     it 'returns a new contact object by id' do
-      contact = Contact.create_contact( ["Kevin","Charles","kevindebrincharles@example.com", "21323341", "Cap-Au-Haitien", "Medecin"])
+      # contact = Contact.create_contact( ["Kevin","Charles","kevindebrincharles@example.com", "21323341", "Cap-Au-Haitien", "Medecin"])
+      junny.save
+      contact_from_db = Contact.find_by_id(junny.id)
 
-      contact_from_db = Contact.find_by_id(1)
-
-      expect(contact_from_db.id).to eq(1)
+      expect(contact_from_db.id).to eq(junny.id)
     end
   end
 
   describe '#delete' do
-    it 'returns a new contact object by id' do
+    it 'should delete the contact in the database' do
       junny.save
       junny.delete
-      expect(Contact.find_by_id(junny.id))
-      table_check_sql = "SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name='contacts';"
-      expect(DB[:conn].execute(table_check_sql)[0]).to eq(nil)
-
+      expect(Contact.find_by_id(junny.id)).to eq(nil)
     end
   end
 

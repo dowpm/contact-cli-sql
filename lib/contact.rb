@@ -99,7 +99,7 @@ class Contact
 
     end 
 
-    def delete_all_contact
+    def self.delete_all_contact
       sql = <<-SQL
       delete FROM contacts
       SQL
