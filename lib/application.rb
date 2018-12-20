@@ -24,11 +24,13 @@ class Application
         "show_option"
     end
 
-    def self.check_for_contact opt
+    def self.check_for_contact? opt
         system "clear" or system "cls"
         if Contact.all.size == 0
             puts " You have no contact to #{opt} yet","\n","Choose an option:"
-            show_option
+            true
+            else
+                false
         end
     end
 
@@ -56,13 +58,12 @@ class Application
             system "clear" or system "cls"
             add_contact
         when 2
-            check_for_contact "see"
+            return 'show_ooption' if check_for_contact? "see"
             row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
             contacts = Contact.all.each.with_index(1).map do |person, index|
                 ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
                     person.phone, person.address, person.profession]
             end
-            # row_table = Contact.show_all_contacts if option == 2
             table = Terminal::Table.new :headings => row_header, :rows => contacts
             table.style = {
                 :all_separators => true,:padding_left => 3, 
@@ -72,13 +73,13 @@ class Application
             puts "\n","Choose an option:"
             "show_option"
         when 4
-            check_for_contact "edite"
+            check_for_contact? "edite"
             edit_contact
         when 5
-            check_for_contact "delete"
+            check_for_contact? "delete"
             delete_contact
         when 6
-            check_for_contact "edite"
+            check_for_contact? "edite"
             
         when 7
             puts "Do you really want to exit (y/n)"
@@ -97,7 +98,8 @@ class Application
         info, correct = [], ""
         ADDCONTACTSTAPE.each do |stape|
             puts "\n",stape
-            inf = gets.strip
+            stape.include?('firstname') || stape.include?('lastname') ? 
+            inf = gets.strip.capitalize : inf = gets.strip
             if inf.downcase == "!q"
                 # save_contacts(Contact.to_json)
                 system "clear" or system "cls"
@@ -106,13 +108,15 @@ class Application
             info << inf
         end
         #---------------------
-        #--------------------------------------check if everything is ok
+        system "clear" or system "cls" 
+        #--------------------------------------check if all info is ok
         while correct.empty?
-            system "clear" or system "cls"        
+                   
             info.each {|i| print "#{i} \t"}
             puts "\n","Is Everything correct? (y/n)"
             correct = gets.strip.downcase
             if correct != "y" && correct != "n" && correct != "yes" && correct != "no"
+                system "clear" or system "cls" 
                 puts "\n", "Bad choice", "\n"
                 correct = ""
             end
@@ -120,10 +124,14 @@ class Application
         #---------------------
 
         system "clear" or system "cls"
-        return "add_contact" if correct == "n" or correct == "no"
-        Contact.create_contact info if correct == "y" or correct == "yes"
-        puts "Now you have #{Contact.all.size} contact(s)","Choose an option:","\n"
-        "show_option"
+        if correct == "n" or correct == "no"
+            return "add_contact" 
+        else
+            contact = Contact.create_contact info
+            puts "#{contact.firstname} #{contact.lastname} has been successfully added to your contact\n"
+            puts "Now you have #{Contact.all.size} contact(s)","Choose an option:","\n"
+            "show_option"
+        end
     end
 
     def self.edit_contact
