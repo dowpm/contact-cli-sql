@@ -19,7 +19,8 @@ class Application
     end
 
     def self.start
-        puts "You have #{Contact.all.size} contact(s)","** You can type !q to back to the menu **"
+        puts "You have #{Contact.all.size} contact(s)"
+        # puts "** You can type !q to back to the menu **"
         puts "-----------------------------------------------","Choose an option:"
         "show_option"
     end
@@ -70,7 +71,17 @@ class Application
             "show_option"
         when 3
             return 'show_option' if check_for_contact? "find"
-            # edit_contact
+            puts "Enter the firstname"
+            print "=> "
+            firstname = gets.strip.capitalize
+            if !Contact.find_by_firstname(firstname).empty? 
+                print_contacts_find firstname
+                puts "\n"
+                "show_option"
+            else
+                puts 'Sorry!!! No contact was found'
+                "show_option"
+            end
         when 4
             check_for_contact? "edite"
             edit_contact
@@ -78,10 +89,21 @@ class Application
             check_for_contact? "delete"
             delete_contact
         when 6
-            check_for_contact? "edite"
-            
+            check_for_contact? "delete"
+            puts "Do you really want to delete all the contacts? (y/n)"
+            print "=> "
+            del = gets.strip.downcase
+            if del == 'y' or del == 'yes'
+                Contact.delete_all_contact
+                system 'cls' or system 'clear'
+                puts "All contacts has been deleted \n"
+                "start"
+            else
+                system 'cls' or system 'clear'
+                "show_option"
+            end
         when 7
-            puts "Do you really want to exit (y/n)"
+            puts "Do you really want to exit? (y/n)"
             exi = gets.strip.downcase
             if exi == "n" or exi == "no"
                 return "start"
@@ -198,11 +220,12 @@ class Application
     end
 
     def self.delete_contact
-        puts "Choose the contact to delete:","** You can type !q to back to the menu **"
+        puts "** Type !q to back to the menu **","Choose the contact to delete:"
         contacts = Contact.all.each.with_index(1).map do |person, index|
             "#{index}. #{person.firstname} #{person.lastname}"
         end.join("\n")
         puts contacts
+        print "=> "
         index = gets.strip
         if index.upcase == "!Q"
             return "start"
@@ -210,18 +233,21 @@ class Application
         index = index.to_i
         if index < 1 or index > Contact.all.size
             system "cls" or system "clear"
+            puts 'wrong input!!!'
             return "delete_contact"
         end
         puts "Are you sure? (Y/N)"
         ch = gets.strip.upcase
         if ch == "N" or ch == "NO"
             return "start"
+        else
+            system "clear" or system "cls"
+            contact = Contact.all[index-1]
+            contact.delete
+            puts "#{contact.firstname} #{contact.lastname} has been deleted","\n"
+            puts "Choose an option:"
+            "show_option"
         end
-        system "clear" or system "cls"
-        contact = Contact.all[index-1]
-        contact.delete
-        puts "#{contact.firstname} #{contact.lastname} has been deleted","\n","Choose an option:"
-        "show_option"
     end
 
     def self.print_contacts(from_number)
@@ -239,23 +265,23 @@ class Application
                         :border_x => "=", :border_i => "x"
                     }
         puts table
-  end
-  def self.print_contacts_find(firstname)
-      
-    rows = Contact.find_by_firstname(firstname).each.with_index(1).map do |person, index|
-        ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
-            person.phone, person.address, person.profession]
     end
-    row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
-    table = Terminal::Table.new :title => "Contacts (#{firstname}) ",
-     :headings => row_header, :rows => rows
-    
-    table.style = {
-                    :all_separators => true,:padding_left => 3, 
-                    :border_x => "=", :border_i => "x"
-                }
-    puts table
-end
+    def self.print_contacts_find(firstname)
+        
+        rows = Contact.find_by_firstname(firstname).each.with_index(1).map do |person, index|
+            ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
+                person.phone, person.address, person.profession]
+        end
+        row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
+        table = Terminal::Table.new :title => "Contacts (#{firstname}) ",
+        :headings => row_header, :rows => rows
+        
+        table.style = {
+                        :all_separators => true,:padding_left => 3, 
+                        :border_x => "=", :border_i => "x"
+                    }
+        puts table
+    end
 end
 
 binding.pry
