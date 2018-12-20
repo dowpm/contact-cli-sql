@@ -54,6 +54,17 @@ class Contact
         new(*row)
       end.first
     end
+    
+    def self.find_by_phone(phone)
+      sql = <<-SQL
+        SELECT *
+        FROM contacts
+        WHERE phone LIKE ?
+      SQL
+      DB[:conn].execute(sql, phone+'%').map do |row|
+        new(*row)
+      end
+    end
 
     def self.all
       sql = <<-SQL
@@ -61,7 +72,7 @@ class Contact
         FROM contacts ORDER BY firstname
       SQL
       DB[:conn].execute(sql).map do |row|
-        self.new_from_db(row)
+        self.new(*row)
       end
     end
 
@@ -73,8 +84,6 @@ class Contact
       SQL
       DB[:conn].execute(sql, self.firstname, self.lastname, self.email, self.phone, self.address, self.profession, self.id)
     end
-
-
 
     def save
       if self.id
