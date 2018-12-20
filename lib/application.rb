@@ -59,18 +59,13 @@ class Application
             add_contact
         when 2
             return 'show_option' if check_for_contact? "see"
-            row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
-
-            contacts = Contact.all.each.with_index(1).map do |person, index|
-                ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
-                    person.phone, person.address, person.profession]
-            end
-            table = Terminal::Table.new :headings => row_header, :rows => contacts
-            table.style = {
-                :all_separators => true,:padding_left => 3, 
-                :border_x => "=", :border_i => "x"
-            }
-            puts table
+            puts "What number of contacts do you want to see? (1-10) "
+            print "=> "
+            from_number = gets.strip.to_i
+            from_number = 1 if from_number == 0
+            from_number = Contact.all.size if from_number > Contact.all.size
+            #print_contacts
+            print_contacts from_number
             puts "\n","Choose an option:"
             "show_option"
         when 3
@@ -141,8 +136,8 @@ class Application
     def self.edit_contact
         info, correct = [], ""
         
-        puts "Choose the contact to edite:","** You can type '!q' to back to the menu **"
-        puts "** You can hit enter to keep the old information **"
+        puts "** You can hit enter to keep the old information **","** You can type '!q' to back to the menu **"
+        puts "\n Choose the contact to edit:"
         contacts = Contact.all.each.with_index(1).map do |person, index|
             "#{index}. #{person.firstname} #{person.lastname}"
         end.join("\n")
@@ -156,6 +151,7 @@ class Application
         index = index.to_i
         if index < 1 or index > (Contact.all.size)
             system "clear" or system "cls"
+            puts "Wrong input \n"
             return "edit_contact"
         end
         contact = Contact.all[index-1]
@@ -165,8 +161,10 @@ class Application
         EDITCONTACTSTAPE.each.with_index do |stape, i|
             
             puts "#{stape} for (#{data[i]})"
+
             stape.include?('firstname') || stape.include?('lastname') ? 
             inf = gets.strip.capitalize : inf = gets.strip
+
             return "start" if inf.upcase == "!Q"
             if inf == ""
                 info << data[i]
@@ -189,7 +187,7 @@ class Application
         system "clear" or system "cls"
         if correct == "N" or correct == "NO"
             system "clear" or system "cls"
-            edit_contact
+            "edit_contact"
         else
             info.unshift contact.id
             contact = Contact.create_contact info
@@ -233,7 +231,7 @@ class Application
                 person.phone, person.address, person.profession]
         end
         row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
-        table = Terminal::Table.new :title => "Contacts #{from_number} - #{from_number+9}",
+        table = Terminal::Table.new :title => "Contacts (#{from_number} - #{from_number+9}) of #{Contact.all.size}",
          :headings => row_header, :rows => rows
         
         table.style = {
