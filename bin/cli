@@ -2,3 +2,21 @@
 
 require_relative '../config/environment'
 
+var = "start"
+while var != "exit"
+    
+    case var
+    when "start"
+        var = Application.start
+    when "show_option"
+        var = Application.show_option
+    when "add_contact"
+        puts "Please Re-enter the informations","\n"
+        var = Application.add_contact
+    when "edit_contact"
+        var = Application.edit_contact
+    when "delete_contact"
+        puts "Option out of range","\n"
+        var = Application.delete_contact
+    end
+end
