@@ -12,6 +12,13 @@ class Application
         "5. Delete a contact", "6. Delete all contacts", "7. Exit to My_contact", "\n"]
 
     def self.welcome
-        puts "\t\t--------- Welcome to My_Contact ---------"
+        puts "\t\t--------- Welcome to My_Contact ---------","\n"
+        Contact.create_table
+    end
+
+    def self.start
+        puts "You have #{Contact.all.size} contact(s)","** You can type !q to back to the menu **"
+        puts "-----------------------------------------------","Choose an option:"
+        "show_option"
     end
 end
