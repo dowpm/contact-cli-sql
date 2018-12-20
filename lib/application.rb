@@ -1,11 +1,13 @@
+require_relative 'contact'
 class Application
     ADDCONTACTSTAPE = [
         "Enter the firstname","Enter the lastname",
-        "Enter the email","Enter the address","Enter the phone number", "Enter the profession"]
+        "Enter the email","Enter the phone number",
+        "Enter the address", "Enter the profession"]
     EDITCONTACTSTAPE = [
         "Enter the new firstname","Enter the new lastname",
-        "Enter the new email","Enter the new address",
-        "Enter the new phone number","Enter the new profession"]
+        "Enter the new email","Enter the new phone number",
+        "Enter the new address","Enter the new profession"]
     CHOICES = [
         ["1. Add a contact", "2. Show contacts asc" ],
         ["3.Find contact by firstname", "4. Edit a contact"], 
@@ -45,8 +47,8 @@ class Application
         when 1
             system "clear" or system "cls"
             add_contact
-        when 0 , 7
-            puts "Do you really want to exit (Y/N)"
+        when 7
+            puts "Do you really want to exit (y/n)"
             exi = gets.strip.downcase
             if exi == "n" or exi == "no"
                 return "start"
@@ -55,6 +57,41 @@ class Application
             "exit"
         end
         
+    end
+
+    def self.add_contact
+        #--------------------------------------get info to save contact
+        info, correct = [], ""
+        ADDCONTACTSTAPE.each do |stape|
+            puts "\n",stape
+            inf = gets.strip
+            if inf.downcase == "!q"
+                # save_contacts(Contact.to_json)
+                system "clear" or system "cls"
+                return "start"
+            end
+            info << inf
+        end
+        #---------------------
+        #--------------------------------------check if everything is ok
+        while correct.empty?
+            system "clear" or system "cls"        
+            info.each {|i| print "#{i} \t"}
+            puts "\n","Is Everything correct? (y/n)"
+            correct = gets.strip.downcase
+            if correct != "y" && correct != "n" && correct != "yes" && correct != "no"
+                puts "\n", "Bad choice", "\n"
+                correct = ""
+            end
+        end
+        #---------------------
+
+        system "clear" or system "cls"
+        return "add_contact" if correct == "n" or correct == "no"
+        # puts Contact.add_contact(info) if correct == "Y" or correct == "YES"
+        Contact.create_contact info if correct == "y" or correct == "yes"
+        puts "Now you have #{Contact.all.size} contact(s)","Choose an option:","\n"
+        "show_option"
     end
 end
 
