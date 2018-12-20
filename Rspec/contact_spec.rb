@@ -62,18 +62,15 @@ describe "Contact" do
     end
   end
 
-  # describe ".create" do
-  #   it 'takes in a hash of attributes and uses metaprogramming to create a new contact object. Then it uses the #save method to save that contact to the database'do
-  #     Contact.create(name: "Ralph", breed: "lab")
-  #     expect(DB[:conn].execute("SELECT * FROM contacts")).to eq([[1, "Ralph", "lab"]])
-  #   end
-  #   it 'returns a new dog object' do
-  #     contact = Contact.create(name: "Dave", breed: "podle")
+  describe '.find_by_firstname' do
+    it 'returns an array of new contact object by firstname' do
+      contact = Contact.create_contact( ["Kevin","Charles","kevindebrincharles@example.com", "21323341", "Cap-Au-Haitien", "Medecin"])
 
-  #     expect(teddy).to be_an_instance_of(Dog)
-  #     expect(dog.name).to eq("Dave")
-  #   end
-  # end
+      contact_from_db = Contact.find_by_firstname(contact.firstname)
+
+      expect(contact_from_db[0].id).to eq(contact.id)
+    end
+  end
 
   describe '.find_by_id' do
     it 'returns a new contact object by id' do
@@ -85,5 +82,34 @@ describe "Contact" do
     end
   end
 
+  describe '#delete' do
+    it 'returns a new contact object by id' do
+      junny.save
+      junny.delete
+      expect(Contact.find_by_id(junny.id))
+      table_check_sql = "SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name='contacts';"
+      expect(DB[:conn].execute(table_check_sql)[0]).to eq(nil)
+
+    end
+  end
+
+  describe '#delete_all_contact' do
+    it 'returns all the contacts info at once' do
+      Contact.delete_all_contact
+      execute(Contact.all.size).to eq(0)
+
+    end 
+  end 
+
+  describe '#update' do
+    it 'updates the record associated with a given instance' do
+      junny.save
+      junny.name = "Johnny"
+      junny.update
+      junny = Contact.find_by_name("Johnny.")
+      expect(junny.id).to eq(junny.id)
+    end
+
+  end
 
 end
