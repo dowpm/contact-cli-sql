@@ -30,8 +30,8 @@ class Application
         if Contact.all.size == 0
             puts " You have no contact to #{opt} yet","\n","Choose an option:"
             true
-            else
-                false
+        else
+            false
         end
     end
 
@@ -198,7 +198,9 @@ class Application
             stape.include?('firstname') || stape.include?('lastname') ? 
             inf = gets.strip.capitalize : inf = gets.strip
 
-            return "start" if inf.upcase == "!Q"
+            if inf.upcase == "!Q"
+                system 'cls' or system 'clear'; return "start" 
+            end
             if inf == ""
                 info << data[i]
             else
