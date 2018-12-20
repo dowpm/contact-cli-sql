@@ -36,24 +36,22 @@ class Contact
       sql = <<-SQL
         SELECT *
         FROM contacts
-        WHERE firstname = ?
-        LIMIT 1
+        WHERE firstname LIKE ?
       SQL
-      DB[:conn].execute(sql, firstname).map do |row|
+      DB[:conn].execute(sql, firstname+'%').map do |row|
         new(*row)
-      end.first
+      end
     end
 
-    def self.find_by_lastname(lastname)
+    def self.find_by_phone(phone)
       sql = <<-SQL
         SELECT *
         FROM contacts
-        WHERE lastname = ?
-        LIMIT 1
+        WHERE phone LIKE ?
       SQL
-      DB[:conn].execute(sql, lastname).map do |row|
+      DB[:conn].execute(sql, phone+'%').map do |row|
         new(*row)
-      end.first
+      end
     end
 
     def self.all
