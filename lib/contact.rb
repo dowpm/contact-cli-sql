@@ -31,40 +31,27 @@ class Contact
     def self.create_contact(row)
         new(*row).tap { |c| c.save}
     end
-    
-    def self.new_from_db(row)
-      id = row[0]
-      firstname = row[1]
-      lastname = row[2]
-      email = [3]
-      phone = [4]
-      address = [5]
-      profession = [6]
-      
-      new(id, firstname, lastname, email, phone,  address, profession)
-    end
 
     def self.find_by_firstname(firstname)
       sql = <<-SQL
         SELECT *
         FROM contacts
-        WHERE firstname = ?
-        LIMIT 1
+        WHERE firstname LIKE ?
       SQL
-      DB[:conn].execute(sql, firstname).map do |row|
-        self.new_from_db(row)
-      end.first
+      DB[:conn].execute(sql, firstname+"%").map do |row|
+        new(*row)
+      end
     end
 
-    def self.find_by_lastname(lastname)
+    def self.find_by_id(id)
       sql = <<-SQL
         SELECT *
         FROM contacts
-        WHERE lastname = ?
+        WHERE id = ?
         LIMIT 1
       SQL
-      DB[:conn].execute(sql, lastname).map do |row|
-        self.new_from_db(row)
+      DB[:conn].execute(sql, id).map do |row|
+        new(*row)
       end.first
     end
 
@@ -87,6 +74,8 @@ class Contact
       DB[:conn].execute(sql, self.firstname, self.lastname, self.email, self.phone, self.address, self.profession, self.id)
     end
 
+
+
     def save
       if self.id
         self.update
@@ -101,15 +90,16 @@ class Contact
       end
       self
     end
-    
+  
     def delete
       sql = <<-SQL
       delete FROM contacts WHERE id = ?
       SQL
       DB[:conn].execute(sql, self.id)
+
     end 
 
-    def delete_all_contact
+    def self.delete_all_contact
       sql = <<-SQL
       delete FROM contacts
       SQL
@@ -117,4 +107,4 @@ class Contact
     end 
 
 end 
-    # binding.pry
+    # binding.pry 

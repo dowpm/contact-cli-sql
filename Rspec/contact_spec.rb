@@ -62,21 +62,51 @@ describe Contact do
     end
   end
 
-  # describe ".create" do
-  #   it 'takes in a hash of attributes and uses metaprogramming to create a new contact object. Then it uses the #save method to save that contact to the database'do
-  #     Contact.create(name: "Ralph", breed: "lab")
-  #     expect(DB[:conn].execute("SELECT * FROM contacts")).to eq([[1, "Ralph", "lab"]])
-  #   end
-  #   it 'returns a new dog object' do
-  #     contact = Contact.create(name: "Dave", breed: "podle")
+  describe '.find_by_firstname' do
+    it 'returns an array of new contact object by firstname' do
+      contact = Contact.create_contact( ["Kevin","Charles","kevindebrincharles@example.com", "21323341", "Cap-Au-Haitien", "Medecin"])
 
-  #     expect(teddy).to be_an_instance_of(Dog)
-  #     expect(dog.name).to eq("Dave")
-  #   end
-  # end
+      contact_from_db = Contact.find_by_firstname(contact.firstname)
 
-  
+      expect(contact_from_db[0].id).to eq(contact.id)
+    end
+  end
 
+  describe '.find_by_id' do
+    it 'returns a new contact object by id' do
+      # contact = Contact.create_contact( ["Kevin","Charles","kevindebrincharles@example.com", "21323341", "Cap-Au-Haitien", "Medecin"])
+      junny.save
+      contact_from_db = Contact.find_by_id(junny.id)
 
+      expect(contact_from_db.id).to eq(junny.id)
+    end
+  end
+
+  describe '#delete' do
+    it 'should delete the contact in the database' do
+      junny.save
+      junny.delete
+      expect(Contact.find_by_id(junny.id)).to eq(nil)
+    end
+  end
+
+  describe '.delete_all_contact' do
+    it 'it should delete all the contacts in the database at once' do
+      Contact.delete_all_contact
+      table_check_sql = "SELECT * FROM contacts"
+      expect(DB[:conn].execute(table_check_sql)[0]).to eq(nil)
+    end 
+  end 
+
+  describe 'update' do
+    it 'updates the record associated with a given instance' do
+      junny.save
+      junny.firstname = "Johnny Sam"
+      junny.update
+      contact_from_db = Contact.find_by_firstname("Johnny Sam")
+      expect(contact_from_db[0].id).to eq(junny.id)
+    end
+
+  end
 
 end
