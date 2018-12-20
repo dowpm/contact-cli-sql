@@ -24,6 +24,14 @@ class Application
         "show_option"
     end
 
+    def self.check_for_contact opt
+        system "clear" or system "cls"
+        if Contact.all.size == 0
+            puts " You have no contact to #{opt} yet","\n","Choose an option:"
+            show_option
+        end
+    end
+
     def self.show_option
         #----------------------------------Menu show
         table = Terminal::Table.new :title => "Menu", :rows => CHOICES
@@ -47,6 +55,22 @@ class Application
         when 1
             system "clear" or system "cls"
             add_contact
+        when 2
+            check_for_contact "see"
+            row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
+            contacts = Contact.all.each.with_index(1).map do |person, index|
+                ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
+                    person.phone, person.address, person.profession]
+            end
+            # row_table = Contact.show_all_contacts if option == 2
+            table = Terminal::Table.new :headings => row_header, :rows => contacts
+            table.style = {
+                :all_separators => true,:padding_left => 3, 
+                :border_x => "=", :border_i => "x"
+            }
+            puts table
+            puts "\n","Choose an option:"
+            "show_option"
         when 7
             puts "Do you really want to exit (y/n)"
             exi = gets.strip.downcase
@@ -88,7 +112,6 @@ class Application
 
         system "clear" or system "cls"
         return "add_contact" if correct == "n" or correct == "no"
-        # puts Contact.add_contact(info) if correct == "Y" or correct == "YES"
         Contact.create_contact info if correct == "y" or correct == "yes"
         puts "Now you have #{Contact.all.size} contact(s)","Choose an option:","\n"
         "show_option"
