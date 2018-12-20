@@ -10,7 +10,7 @@ class Application
         "Enter the new address","Enter the new profession"]
     CHOICES = [
         ["1. Add a contact", "2. Show contacts asc" ],
-        ["3.Find contact by firstname", "4. Edit a contact"], 
+        ["3.Find contacts by firstname", "4. Edit a contact"], 
         ["5. Delete a contact", "6. Delete all contacts"], ["7. Exit to My_contact", "\n"]]
 
     def self.welcome
@@ -240,6 +240,22 @@ class Application
                     }
         puts table
   end
+  def self.print_contacts_find(firstname)
+      
+    rows = Contact.find_by_firstname(firstname).each.with_index(1).map do |person, index|
+        ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
+            person.phone, person.address, person.profession]
+    end
+    row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
+    table = Terminal::Table.new :title => "Contacts (#{firstname}) ",
+     :headings => row_header, :rows => rows
+    
+    table.style = {
+                    :all_separators => true,:padding_left => 3, 
+                    :border_x => "=", :border_i => "x"
+                }
+    puts table
+end
 end
 
 binding.pry
