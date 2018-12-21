@@ -59,7 +59,7 @@ class Application
             system "clear" or system "cls"
             add_contact
         when 2
-            return 'show_option' if check_for_contact? "show"
+            return 'show_option' if check_for_contact? "see"
             puts "What number of contacts do you want to see? (1-10) "
             print "=> "
             from_number = gets.strip.to_i
@@ -67,41 +67,32 @@ class Application
             from_number = Contact.all.size if from_number > Contact.all.size
             #print_contacts
             print_contacts from_number
-            puts "Hit enter to go to the menu"
-            gets.strip
-            system "clear" or system "cls"
-            # puts "\n","Choose an option:"
-            "start"
+            puts "\n","Choose an option:"
+            "show_option"
         when 3
             return 'show_option' if check_for_contact? "find"
-            puts "** Hit !q to go back to the menu **","Enter the firstname"
+            puts "Enter the firstname"
             print "=> "
-            firstname = gets.strip
-            system 'cls' or system 'clear'; return "start" if firstname.downcase == "!q"
-            firstname = firstname.capitalize
+            firstname = gets.strip.capitalize
             if !Contact.find_by_firstname(firstname).empty? 
                 print_contacts_find firstname
-                puts "Hit enter to go to the menu"
-                gets.strip
-                system "clear" or system "cls"
-                "start"
+                puts "\n"
+                "show_option"
             else
-                puts 'Sorry!!! No contact was found',"\n"
-                puts "Choose an option"
+                puts 'Sorry!!! No contact was found'
                 "show_option"
             end
         when 4
-            return 'show_option' if check_for_contact? "edit"
+            check_for_contact? "edite"
             edit_contact
         when 5
-            return 'show_option' if check_for_contact? "delete"
+            check_for_contact? "delete"
             delete_contact
         when 6
-            return 'show_option' if check_for_contact? "delete"
+            check_for_contact? "delete"
             puts "Do you really want to delete all the contacts? (y/n)"
             print "=> "
             del = gets.strip.downcase
-            system 'cls' or system 'clear'; return "start" if del == "!q"
             if del == 'y' or del == 'yes'
                 Contact.delete_all_contact
                 system 'cls' or system 'clear'
@@ -109,13 +100,12 @@ class Application
                 "start"
             else
                 system 'cls' or system 'clear'
-                "start"
+                "show_option"
             end
         when 7
             puts "Do you really want to exit? (y/n)"
             exi = gets.strip.downcase
             if exi == "n" or exi == "no"
-                system 'cls' or system 'clear'
                 return "start"
             end
             puts "Byeeeeeee"
@@ -159,8 +149,8 @@ class Application
             return "add_contact" 
         else
             contact = Contact.create_contact info
-            puts "#{contact.firstname} #{contact.lastname} has been successfully added to your contact","\n"
-            puts "Now you have #{Contact.all.size} contact(s)","\n" ,"Choose an option:"
+            puts "#{contact.firstname} #{contact.lastname} has been successfully added to your contact\n"
+            puts "Now you have #{Contact.all.size} contact(s)","Choose an option:","\n"
             "show_option"
         end
     end
@@ -177,7 +167,6 @@ class Application
 
         index = gets.strip
         if index.upcase == "!Q"
-            system 'cls' or system 'clear'
             return "start"
         end
 
@@ -198,22 +187,22 @@ class Application
             stape.include?('firstname') || stape.include?('lastname') ? 
             inf = gets.strip.capitalize : inf = gets.strip
 
-            if inf.upcase == "!Q"
-                system 'cls' or system 'clear'; return "start" 
-            end
+            return "start" if inf.upcase == "!Q"
             if inf == ""
                 info << data[i]
             else
                 info << inf
             end
         end
+        system "clear" or system "cls"
         #--------------------------------------check if all info is ok
         while correct.empty?
-            system "clear" or system "cls"
+            
             info.each {|i| print "#{i} \t"}
             puts "\n","Is Everything correct? (Y/N)"
             correct = gets.strip.upcase
             if correct != "Y" && correct != "N" && correct != "YES" && correct != "NO"
+                system "clear" or system "cls"
                 puts "\n", "Bad choice", "\n"
                 correct = ""
             end
@@ -227,13 +216,13 @@ class Application
             info.unshift contact.id
             contact = Contact.create_contact info
             puts "#{contact.firstname} #{contact.lastname} has been successfully edited \n"
-            puts "\n"
+            puts "Choose an option:","\n"
             "show_option"
         end        
     end
 
     def self.delete_contact
-        puts "** Type !q to back to the menu **","\n","Choose the contact to delete:"
+        puts "** Type !q to back to the menu **","Choose the contact to delete:"
         contacts = Contact.all.each.with_index(1).map do |person, index|
             "#{index}. #{person.firstname} #{person.lastname}"
         end.join("\n")
@@ -241,7 +230,6 @@ class Application
         print "=> "
         index = gets.strip
         if index.upcase == "!Q"
-            system 'cls' or system 'clear'
             return "start"
         end
         index = index.to_i
@@ -259,8 +247,8 @@ class Application
             contact = Contact.all[index-1]
             contact.delete
             puts "#{contact.firstname} #{contact.lastname} has been deleted","\n"
-            # puts "Choose an option:"
-            "start"
+            puts "Choose an option:"
+            "show_option"
         end
     end
 
@@ -270,8 +258,10 @@ class Application
             ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
                 person.phone, person.address, person.profession]
         end
+        end_nomber = Contact.all.size if from_number+9 > Contact.all.size
+
         row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
-        table = Terminal::Table.new :title => "Contacts (#{from_number} - #{from_number+9}) of #{Contact.all.size}",
+        table = Terminal::Table.new :title => "Contacts (#{from_number} - #{end_nomber}) ",
          :headings => row_header, :rows => rows
         
         table.style = {
@@ -298,4 +288,4 @@ class Application
     end
 end
 
-# binding.pry
+binding.pry
