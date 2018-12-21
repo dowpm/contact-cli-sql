@@ -30,8 +30,8 @@ class Application
         if Contact.all.size == 0
             puts " You have no contact to #{opt} yet","\n","Choose an option:"
             true
-            else
-                false
+        else
+            false
         end
     end
 
@@ -194,13 +194,15 @@ class Application
                 info << inf
             end
         end
+        system "clear" or system "cls"
         #--------------------------------------check if all info is ok
         while correct.empty?
-            system "clear" or system "cls"
+            
             info.each {|i| print "#{i} \t"}
             puts "\n","Is Everything correct? (Y/N)"
             correct = gets.strip.upcase
             if correct != "Y" && correct != "N" && correct != "YES" && correct != "NO"
+                system "clear" or system "cls"
                 puts "\n", "Bad choice", "\n"
                 correct = ""
             end
@@ -256,8 +258,10 @@ class Application
             ["#{index}.","#{person.firstname} #{person.lastname}", person.email,
                 person.phone, person.address, person.profession]
         end
+        end_nomber = Contact.all.size if from_number+9 > Contact.all.size
+
         row_header = ["No", "Fullname","Email","Phone number","Address","Profession"]
-        table = Terminal::Table.new :title => "Contacts (#{from_number} - #{from_number+9}) of #{Contact.all.size}",
+        table = Terminal::Table.new :title => "Contacts (#{from_number} - #{end_nomber}) ",
          :headings => row_header, :rows => rows
         
         table.style = {
